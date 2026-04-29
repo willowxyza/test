@@ -10,6 +10,7 @@ type SubmitStatus = "idle" | "loading" | "success" | "error";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
+  const [englishName, setEnglishName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<SubmitStatus>("idle");
@@ -17,6 +18,7 @@ export default function ContactPage() {
 
   const isFormValid =
     name.trim().length > 0 &&
+    englishName.trim().length > 0 &&
     email.trim().length > 0 &&
     message.trim().length > 0;
 
@@ -29,6 +31,7 @@ export default function ContactPage() {
 
     const { error } = await supabase.from("contacts").insert({
       name: name.trim(),
+      english_name: englishName.trim(),
       email: email.trim(),
       message: message.trim(),
       // created_at 은 DB 기본값(now())으로 자동 저장
@@ -40,6 +43,7 @@ export default function ContactPage() {
     } else {
       setStatus("success");
       setName("");
+      setEnglishName("");
       setEmail("");
       setMessage("");
     }
@@ -78,25 +82,43 @@ export default function ContactPage() {
 
         {/* Contact Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacing-400)]">
-          <div className="flex flex-col md:flex-row gap-[var(--spacing-400)]">
-            {/* Name Field */}
-            <div className="flex flex-col gap-[var(--spacing-200)] flex-1">
-              <label
-                htmlFor="name"
-                className="text-[length:var(--text-body-size-medium)] font-[var(--sds-typography-body-font-weight-regular)] text-[var(--color-text-default-default)]"
-              >
-                이름
-              </label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="이름을 입력하세요"
-              />
+          <div className="flex flex-col gap-[var(--spacing-400)]">
+            <div className="flex flex-col md:flex-row gap-[var(--spacing-400)]">
+              {/* Name Field */}
+              <div className="flex flex-col gap-[var(--spacing-200)] flex-1">
+                <label
+                  htmlFor="name"
+                  className="text-[length:var(--text-body-size-medium)] font-[var(--sds-typography-body-font-weight-regular)] text-[var(--color-text-default-default)]"
+                >
+                  이름 (한글)
+                </label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="이름을 입력하세요"
+                />
+              </div>
+
+              {/* English Name Field */}
+              <div className="flex flex-col gap-[var(--spacing-200)] flex-1">
+                <label
+                  htmlFor="englishName"
+                  className="text-[length:var(--text-body-size-medium)] font-[var(--sds-typography-body-font-weight-regular)] text-[var(--color-text-default-default)]"
+                >
+                  이름 (영문)
+                </label>
+                <Input
+                  id="englishName"
+                  value={englishName}
+                  onChange={(e) => setEnglishName(e.target.value)}
+                  placeholder="Enter your name in English"
+                />
+              </div>
             </div>
 
             {/* Email Field */}
-            <div className="flex flex-col gap-[var(--spacing-200)] flex-1">
+            <div className="flex flex-col gap-[var(--spacing-200)]">
               <label
                 htmlFor="email"
                 className="text-[length:var(--text-body-size-medium)] font-[var(--sds-typography-body-font-weight-regular)] text-[var(--color-text-default-default)]"
